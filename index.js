@@ -18,7 +18,7 @@ const client = new tmi.Client({
   connection: {
     secure: true,
   },
-  channels: ["veryhandsomebilly"],
+  channels: ["opti_21"],
 });
 
 client.connect();
@@ -31,7 +31,7 @@ client.on("message", async (channel, tags, message, self) => {
   let parsedM = message.trim().split(" ");
   let command = parsedM[0].slice(1).toLowerCase();
 
-  if (command === "tr") {
+  if (command === "tr" || command === "sr") {
     const reqStr = parsedM.slice(1).join(" ");
     const request = {
       message: reqStr,
