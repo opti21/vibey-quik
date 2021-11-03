@@ -1,6 +1,13 @@
-require("dotenv").config();
-const Pusher = require("pusher");
-const tmi = require("tmi.js");
+import dotenv from 'dotenv'
+dotenv.config()
+import tmi from "tmi.js"
+import Pusher from "pusher-js"
+
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = 'https://kumfyagspvlguifdxmnu.supabase.co'
+const supabaseKey = process.env.SUPABASE_KEY
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -23,13 +30,17 @@ const client = new tmi.Client({
 
 client.connect();
 
-client.on("message", async (channel, tags, message, self) => {
+client.on("message", async (channel, tags, message, userstate, self) => {
   // Ignore echoed messages.
   if (self) return;
 
   if (message[0] !== "!") return;
-  let parsedM = message.trim().split(" ");
-  let command = parsedM[0].slice(1).toLowerCase();
+  const parsedM = message.trim().split(" ");
+  const command = parsedM[0].slice(1).toLowerCase();
+  const badges = tags.badges || {};
+  const isBroadcaster = badges.broadcaster;
+  const isMod = badges.moderator;
+  const isModUp = isMod || isBroadcaster;
 
   if (command === "tr" || command === "sr") {
     const reqStr = parsedM.slice(1).join(" ");
@@ -45,4 +56,19 @@ client.on("message", async (channel, tags, message, self) => {
       console.error(err);
     }
   }
+
+  if (isModUp && command === "setpressups") {
+    const numStr = parsedM.slice(1).join(" ");
+    
+          const {data, error} = await supabase.from("pressups")
+          .update({count: parseInt(numStr)})
+          .match({id: 1})
+
+          if (!error) {client.say(channel, `${tags.username} Pressups updated`)}
+      else {
+          console.error(error)
+          client.say(channel, "Error setting Pressups")
+      }
+  }
 });
+

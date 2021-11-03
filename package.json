@@ -11,12 +11,14 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@supabase/supabase-js": "^1.25.2",
     "ably": "^1.2.14",
     "dotenv": "^10.0.0",
-    "pusher": "^5.0.0",
+    "pusher-js": "^7.0.3",
     "tmi.js": "^1.8.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.13"
-  }
+  },
+  "type": "module"
 }
