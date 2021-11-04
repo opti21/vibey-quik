@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 dotenv.config()
 import tmi from "tmi.js"
-import Pusher from "pusher-js"
+import Pusher from "pusher"
 
 import { createClient } from '@supabase/supabase-js'
 
