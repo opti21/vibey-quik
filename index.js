@@ -1,13 +1,13 @@
-import dotenv from 'dotenv'
-dotenv.config()
-import tmi from "tmi.js"
-import Pusher from "pusher"
+import dotenv from "dotenv";
+dotenv.config();
+import tmi from "tmi.js";
+import Pusher from "pusher";
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = 'https://kumfyagspvlguifdxmnu.supabase.co'
-const supabaseKey = process.env.SUPABASE_KEY
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabaseUrl = "https://kumfyagspvlguifdxmnu.supabase.co";
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID,
@@ -25,7 +25,7 @@ const client = new tmi.Client({
   connection: {
     secure: true,
   },
-  channels: ["veryhandsomebilly"],
+  channels: ["opti_21"],
 });
 
 client.connect();
@@ -59,16 +59,29 @@ client.on("message", async (channel, tags, message, userstate, self) => {
 
   if (isModUp && command === "setpressups") {
     const numStr = parsedM.slice(1).join(" ");
-    
-          const {data, error} = await supabase.from("pressups")
-          .update({count: parseInt(numStr)})
-          .match({id: 1})
 
-          if (!error) {client.say(channel, `${tags.username} Pressups updated`)}
-      else {
-          console.error(error)
-          client.say(channel, "Error setting Pressups")
-      }
+    const { data, error } = await supabase
+      .from("pressups")
+      .update({ count: parseInt(numStr) })
+      .match({ id: 1 });
+
+    if (!error) {
+      client.say(channel, `${tags.username} Pressups updated`);
+    } else {
+      console.error(error);
+      client.say(channel, "Error setting Pressups");
+    }
+  }
+
+  if (command === "pressupc") {
+    let { data: pressups, error } = await supabase
+      .from("pressups")
+      .select("*")
+      .eq("id", 1);
+
+    if (!error) {
+      let pressupsCount = pressups[0].count;
+      client.say(channel, `Billy has to do ${pressupsCount} pressups`);
+    }
   }
 });
-
