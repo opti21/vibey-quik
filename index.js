@@ -25,7 +25,7 @@ const client = new tmi.Client({
   connection: {
     secure: true,
   },
-  channels: ["opti_21"],
+  channels: ["veryhandsomebilly"],
 });
 
 client.connect();
