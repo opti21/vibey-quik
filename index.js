@@ -72,6 +72,25 @@ client.on("message", async (channel, tags, message, userstate, self) => {
       client.say(channel, "Error setting Pressups");
     }
   }
+  if (isModUp && command === "addpressups") {
+    const numStr = parsedM.slice(1).join(" ");
+    let { data: pressups, error } = await supabase
+      .from("pressups")
+      .select("*")
+      .eq("id", 1);
+
+    if (!error) {
+      let newCount = pressups[0].count + parseInt(numStr);
+      const { data, error } = await supabase
+        .from("pressups")
+        .update({ count: newCount })
+        .match({ id: 1 });
+
+      if (!error) {
+        client.say(channel, `Billy now has to do ${newCount} pressups`);
+      }
+    }
+  }
 
   if (command === "pressupc") {
     let { data: pressups, error } = await supabase
